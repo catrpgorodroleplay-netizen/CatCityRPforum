@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatCityRP - форум Minecraft</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 0;
+            border-bottom: 2px solid #0f3460;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e94560;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            background: #0f3460;
+        }
+
+        .page {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid #0f3460;
+        }
+
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #c2334d;
+            transform: translateY(-2px);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid #e94560;
+        }
+
+        .post {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0f3460;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .post-content {
+            margin-bottom: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comment {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 2px solid #0f3460;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .comment-avatar {
+            font-size: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .messages-layout {
+            display: flex;
+            height: 600px;
+            gap: 20px;
+        }
+
+        .conversations-sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .conversations-list {
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        .message-user {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .message-user:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .message-user.active {
+            background: rgba(233, 69, 96, 0.2);
+            border-left: 3px solid #e94560;
+        }
+
+        .message-avatar {
+            font-size: 24px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-avatar {
+            font-size: 24px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .message.own {
+            background: rgba(233, 69, 96, 0.3);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.other {
+            background: rgba(15, 52, 96, 0.3);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: flex-end;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            margin-right: 10px;
+            resize: none;
+            height: 60px;
+            min-height: 60px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        .chat-input button {
+            width: auto;
+            padding: 10px 20px;
+            height: 60px;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .avatar-option {
+            font-size: 30px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .avatar-option:hover, .avatar-option.selected {
+            background: rgba(233, 69, 96, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            width: auto;
+        }
+
+        .user-actions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-actions button {
+            width: 45%;
+        }
+
+        .error {
+            color: #e94560;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #4CAF50;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .admin-badge {
+            background: #e94560;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .auto-login-notice {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(15, 52, 96, 0.3);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .blocked-notice {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .no-conversations {
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+        }
+
+        .no-chat-selected {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        .blocked-badge {
+            background: #ff4757;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: auto;
+        }
+
+        .deleted-account {
+            color: #888;
+            font-style: italic;
+        }
+
+        .delete-account-btn {
+            background: #ff4757;
+            margin-top: 20px;
+        }
+
+        .delete-account-btn:hover {
+            background: #ff3742;
+        }
+
+        .danger-zone {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #ff4757;
+            border-radius: 10px;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .danger-zone h3 {
+            color: #ff4757;
+            margin-bottom: 15px;
+        }
+
+        .confirm-delete {
+            background: #ff4757;
+            width: 100%;
+        }
+
+        .confirm-delete:hover {
+            background: #ff3742;
+        }
+
+        .cancel-delete {
+            background: #576574;
+            width: 100%;
+        }
+
+        .cancel-delete:hover {
+            background: #4a5766;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header id="main-header">
+            <div class="header-content">
+                <div class="logo">CatCityRP</div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="posts">Посты</a></li>
+                        <li><a href="#" class="nav-link" data-page="messages">Сообщения</a></li>
+                        <li><a href="#" class="nav-link" data-page="profile">Профиль</a></li>
+                        <li><a href="#" id="logout-btn">Выйти</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Страница авторизации/регистрации -->
+        <div id="auth-page" class="page active">
+            <div class="auth-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="login">Вход</div>
+                    <div class="tab" data-tab="register">Регистрация</div>
+                </div>
+
+                <div id="login-form" class="auth-form">
+                    <h2>Вход в аккаунт</h2>
+                    <div class="form-group">
+                        <label for="login-username">Логин</label>
+                        <input type="text" id="login-username" placeholder="Введите логин">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <input type="password" id="login-password" placeholder="Введите пароль">
+                    </div>
+                    <button id="login-btn">Войти</button>
+                    <div id="login-error" class="error"></div>
+                </div>
+
+                <div id="register-form" class="auth-form" style="display: none;">
+                    <h2>Регистрация аккаунта</h2>
+                    <div class="form-group">
+                        <label for="register-username">Логин</label>
+                        <input type="text" id="register-username" placeholder="Придумайте логин">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Пароль</label>
+                        <input type="password" id="register-password" placeholder="Придумайте пароль">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm">Повторите пароль</label>
+                        <input type="password" id="register-confirm" placeholder="Повторите пароль">
+                    </div>
+                    <button id="register-btn">Зарегистрироваться</button>
+                    <div id="register-error" class="error"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница постов -->
+        <div id="posts-page" class="page">
+            <h2>Посты</h2>
+            <div id="posts-container"></div>
+            <button id="create-post-btn" style="display: none;">Создать пост</button>
+        </div>
+
+        <!-- Страница сообщений -->
+        <div id="messages-page" class="page">
+            <h2>Сообщения</h2>
+            <div class="messages-layout">
+                <div class="conversations-sidebar">
+                    <h3>Диалоги</h3>
+                    <div class="conversations-list" id="conversations-list">
+                        <!-- Список диалогов будет здесь -->
+                    </div>
+                    <div id="no-conversations" class="no-conversations" style="display: none;">
+                        У вас пока нет бесед. Начните общение с кем-нибудь!
+                    </div>
+                </div>
+                <div class="chat-area">
+                    <div id="chat-container" class="chat-container">
+                        <div class="no-chat-selected" id="no-chat-selected">
+                            Выберите диалог для начала общения
+                        </div>
+                        <div id="active-chat" style="display: none;">
+                            <div class="chat-header">
+                                <div class="chat-user-info" id="chat-user-info"></div>
+                                <button id="delete-chat-btn">Удалить чат</button>
+                            </div>
+                            <div class="chat-messages" id="chat-messages"></div>
+                            <div class="chat-input">
+                                <textarea id="message-input" placeholder="Введите сообщение..."></textarea>
+                                <button id="send-message-btn">Отправить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница профиля -->
+        <div id="profile-page" class="page">
+            <h2>Профиль</h2>
+            <div class="profile-container">
+                <div class="profile-avatar" id="profile-avatar-display">😺</div>
+                <div class="form-group">
+                    <label for="profile-username">Логин</label>
+                    <input type="text" id="profile-username" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="profile-description">Описание</label>
+                    <textarea id="profile-description" rows="3" placeholder="Расскажите о себе"></textarea>
+                </div>
+                <h3>Выберите аватарку</h3>
+                <div class="avatar-selector" id="avatar-selector">
+                    <!-- Аватары будут добавлены через JS -->
+                </div>
+                <button id="save-profile-btn">Сохранить изменения</button>
+                <div id="profile-message" class="success"></div>
+
+                <!-- Зона опасности для удаления аккаунта -->
+                <div class="danger-zone">
+                    <h3>⚠️ Опасная зона</h3>
+                    <p>Удаление аккаунта невозможно отменить. Все ваши данные будут безвозвратно удалены.</p>
+                    <button id="delete-account-btn" class="delete-account-btn">Удалить мой аккаунт</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно создания поста -->
+        <div id="create-post-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Создать пост</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="form-group">
+                    <label for="post-title">Название поста</label>
+                    <input type="text" id="post-title" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label for="post-content">Описание</label>
+                    <textarea id="post-content" rows="5" placeholder="Введите описание"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Аватарка поста</label>
+                    <div class="avatar-selector" id="post-avatar-selector">
+                        <!-- Аватары будут добавлены через JS -->
+                    </div>
+                </div>
+                <button id="submit-post-btn">Опубликовать</button>
+                <div id="post-error" class="error"></div>
+            </div>
+        </div>
+
+        <!-- Модальное окно поста с комментариями -->
+        <div id="post-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-post-title"></h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="post-header">
+                    <div class="post-avatar" id="modal-post-avatar"></div>
+                    <div class="post-title" id="modal-post-title-text"></div>
+                </div>
+                <div class="post-content" id="modal-post-content"></div>
+                <div id="post-comments"></div>
+                <div class="form-group">
+                    <textarea id="comment-input" rows="3" placeholder="Напишите комментарий..."></textarea>
+                    <button id="submit-comment-btn">Отправить комментарий</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно действий с пользователем -->
+        <div id="user-actions-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Действия с пользователем</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="user-actions">
+                    <button id="block-user-btn">Заблокировать</button>
+                    <button id="unblock-user-btn">Разблокировать</button>
+                    <button id="start-chat-btn">Начать общение</button>
+                    <button id="delete-user-btn" style="display: none; background: #ff4757;">Удалить аккаунт</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно подтверждения удаления аккаунта -->
+        <div id="confirm-delete-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Подтверждение удаления</h3>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="form-group">
+                    <p id="delete-confirm-text">Вы уверены, что хотите удалить аккаунт? Это действие невозможно отменить.</p>
+                </div>
+                <div class="user-actions">
+                    <button id="confirm-delete-btn" class="confirm-delete">Да, удалить</button>
+                    <button id="cancel-delete-btn" class="cancel-delete">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные приложения
+        const appData = {
+            currentUser: null,
+            users: JSON.parse(localStorage.getItem('catcityrp_users')) || [],
+            posts: JSON.parse(localStorage.getItem('catcityrp_posts')) || [],
+            conversations: JSON.parse(localStorage.getItem('catcityrp_conversations')) || [],
+            blockedUsers: JSON.parse(localStorage.getItem('catcityrp_blocked')) || {},
+            deletedUsers: JSON.parse(localStorage.getItem('catcityrp_deleted')) || [],
+            avatars: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐱', '🐈', '🦁', '🐯', '🐅', '🐆'],
+            currentChat: null
+        };
+
+        // Инициализация приложения
+        function initApp() {
+            // Создаем аккаунт админа, если его нет
+            if (!appData.users.find(user => user.username === 'CREATE')) {
+                appData.users.push({
+                    username: 'CREATE',
+                    password: '01239876cat',
+                    isAdmin: true,
+                    avatar: '😼',
+                    description: 'Администратор CatCityRP'
+                });
+                saveUsers();
+            }
+
+            // Автоматический вход при загрузке страницы
+            const savedUser = localStorage.getItem('catcityrp_currentUser');
+            if (savedUser) {
+                const userData = JSON.parse(savedUser);
+                // Проверяем, существует ли пользователь в базе и не удален ли он
+                const userExists = appData.users.find(u => u.username === userData.username && u.password === userData.password);
+                const isDeleted = appData.deletedUsers.includes(userData.username);
+                
+                if (userExists && !isDeleted) {
+                    // Автоматически входим в аккаунт
+                    appData.currentUser = userData;
+                    showMainPages();
+                } else {
+                    // Если пользователь не найден или удален, удаляем сохраненные данные
+                    localStorage.removeItem('catcityrp_currentUser');
+                    showAuthPage();
+                }
+            } else {
+                showAuthPage();
+            }
+
+            // Инициализация обработчиков событий
+            initEventListeners();
+            renderAvatarSelector();
+        }
+
+        // Сохранение данных
+        function saveUsers() {
+            localStorage.setItem('catcityrp_users', JSON.stringify(appData.users));
+        }
+
+        function savePosts() {
+            localStorage.setItem('catcityrp_posts', JSON.stringify(appData.posts));
+        }
+
+        function saveConversations() {
+            localStorage.setItem('catcityrp_conversations', JSON.stringify(appData.conversations));
+        }
+
+        function saveBlockedUsers() {
+            localStorage.setItem('catcityrp_blocked', JSON.stringify(appData.blockedUsers));
+        }
+
+        function saveDeletedUsers() {
+            localStorage.setItem('catcityrp_deleted', JSON.stringify(appData.deletedUsers));
+        }
+
+        function saveCurrentUser() {
+            localStorage.setItem('catcityrp_currentUser', JSON.stringify(appData.currentUser));
+        }
+
+        // Проверка блокировки пользователя (двусторонняя)
+        function isUserBlocked(username) {
+            // Проверяем, заблокировал ли текущий пользователь этого пользователя
+            const blockedByMe = appData.blockedUsers[appData.currentUser.username] && 
+                               appData.blockedUsers[appData.currentUser.username].includes(username);
+            
+            // Проверяем, заблокировал ли этот пользователь текущего пользователя
+            const blockedByThem = appData.blockedUsers[username] && 
+                                 appData.blockedUsers[username].includes(appData.currentUser.username);
+            
+            return blockedByMe || blockedByThem;
+        }
+
+        // Проверка, удален ли пользователь
+        function isUserDeleted(username) {
+            return appData.deletedUsers.includes(username);
+        }
+
+        // Показать страницу авторизации
+        function showAuthPage() {
+            document.getElementById('auth-page').classList.add('active');
+            document.getElementById('posts-page').classList.remove('active');
+            document.getElementById('messages-page').classList.remove('active');
+            document.getElementById('profile-page').classList.remove('active');
+            document.getElementById('main-header').style.display = 'none';
+        }
+
+        // Показать основные страницы
+        function showMainPages() {
+            document.getElementById('auth-page').classList.remove('active');
+            document.getElementById('posts-page').classList.add('active');
+            document.getElementById('messages-page').classList.remove('active');
+            document.getElementById('profile-page').classList.remove('active');
+            document.getElementById('main-header').style.display = 'block';
+
+            // Показать кнопку создания поста для админа
+            if (appData.currentUser.isAdmin) {
+                document.getElementById('create-post-btn').style.display = 'block';
+            } else {
+                document.getElementById('create-post-btn').style.display = 'none';
+            }
+
+            renderPosts();
+            renderProfile();
+        }
+
+        // Инициализация обработчиков событий
+        function initEventListeners() {
+            // Навигация
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                    document.getElementById(`${page}-page`).classList.add('active');
+                    
+                    if (page === 'messages') {
+                        renderConversations();
+                    }
+                });
+            });
+
+            // Вкладки авторизации/регистрации
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const tabName = this.getAttribute('data-tab');
+                    document.getElementById('login-form').style.display = tabName === 'login' ? 'block' : 'none';
+                    document.getElementById('register-form').style.display = tabName === 'register' ? 'block' : 'none';
+                });
+            });
+
+            // Кнопка входа
+            document.getElementById('login-btn').addEventListener('click', login);
+
+            // Кнопка регистрации
+            document.getElementById('register-btn').addEventListener('click', register);
+
+            // Кнопка выхода
+            document.getElementById('logout-btn').addEventListener('click', logout);
+
+            // Кнопка создания поста
+            document.getElementById('create-post-btn').addEventListener('click', showCreatePostModal);
+
+            // Кнопка отправки поста
+            document.getElementById('submit-post-btn').addEventListener('click', createPost);
+
+            // Кнопка отправки комментария
+            document.getElementById('submit-comment-btn').addEventListener('click', addComment);
+
+            // Кнопка сохранения профиля
+            document.getElementById('save-profile-btn').addEventListener('click', saveProfile);
+
+            // Кнопка отправки сообщения
+            document.getElementById('send-message-btn').addEventListener('click', sendMessage);
+
+            // Кнопка удаления чата
+            document.getElementById('delete-chat-btn').addEventListener('click', deleteChat);
+
+            // Кнопка удаления аккаунта
+            document.getElementById('delete-account-btn').addEventListener('click', showDeleteAccountModal);
+
+            // Кнопки подтверждения удаления
+            document.getElementById('confirm-delete-btn').addEventListener('click', confirmDeleteAccount);
+            document.getElementById('cancel-delete-btn').addEventListener('click', cancelDeleteAccount);
+
+            // Автоматическое изменение высоты textarea при вводе
+            document.getElementById('message-input').addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Отправка сообщения по Enter (с Shift+Enter для новой строки)
+            document.getElementById('message-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Закрытие модальных окон
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+
+            // Действия с пользователем
+            document.getElementById('block-user-btn').addEventListener('click', blockUser);
+            document.getElementById('unblock-user-btn').addEventListener('click', unblockUser);
+            document.getElementById('start-chat-btn').addEventListener('click', startChat);
+            document.getElementById('delete-user-btn').addEventListener('click', showAdminDeleteModal);
+        }
+
+        // Рендер выбора аватарок
+        function renderAvatarSelector() {
+            const avatarSelector = document.getElementById('avatar-selector');
+            const postAvatarSelector = document.getElementById('post-avatar-selector');
+            
+            avatarSelector.innerHTML = '';
+            postAvatarSelector.innerHTML = '';
+            
+            appData.avatars.forEach(avatar => {
+                const avatarOption = document.createElement('div');
+                avatarOption.className = 'avatar-option';
+                avatarOption.textContent = avatar;
+                avatarOption.addEventListener('click', function() {
+                    document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    document.getElementById('profile-avatar-display').textContent = avatar;
+                });
+                avatarSelector.appendChild(avatarOption);
+                
+                const postAvatarOption = document.createElement('div');
+                postAvatarOption.className = 'avatar-option';
+                postAvatarOption.textContent = avatar;
+                postAvatarOption.addEventListener('click', function() {
+                    document.querySelectorAll('#post-avatar-selector .avatar-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+                postAvatarSelector.appendChild(postAvatarOption);
+            });
+        }
+
+        // Функция входа
+        function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            
+            if (!username || !password) {
+                errorDiv.textContent = 'Заполните все поля';
+                return;
+            }
+            
+            // Проверяем, не удален ли аккаунт
+            if (appData.deletedUsers.includes(username)) {
+                errorDiv.textContent = 'Аккаунт был удален';
+                return;
+            }
+            
+            const user = appData.users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                appData.currentUser = user;
+                saveCurrentUser();
+                showMainPages();
+                errorDiv.textContent = '';
+            } else {
+                errorDiv.textContent = 'Неверный логин или пароль';
+            }
+        }
+
+        // Функция регистрации
+        function register() {
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            const errorDiv = document.getElementById('register-error');
+            
+            if (!username || !password || !confirm) {
+                errorDiv.textContent = 'Заполните все поля';
+                return;
+            }
+            
+            if (password !== confirm) {
+                errorDiv.textContent = 'Пароли не совпадают';
+                return;
+            }
+            
+            // Проверяем, не удален ли аккаунт с таким логином
+            if (appData.deletedUsers.includes(username)) {
+                errorDiv.textContent = 'Этот логин был использован в удаленном аккаунте';
+                return;
+            }
+            
+            if (appData.users.find(u => u.username === username)) {
+                errorDiv.textContent = 'Пользователь с таким логином уже существует';
+                return;
+            }
+            
+            const newUser = {
+                username,
+                password,
+                isAdmin: false,
+                avatar: '😺',
+                description: 'Новый пользователь CatCityRP'
+            };
+            
+            appData.users.push(newUser);
+            saveUsers();
+            
+            appData.currentUser = newUser;
+            saveCurrentUser();
+            
+            showMainPages();
+            errorDiv.textContent = '';
+        }
+
+        // Функция выхода
+        function logout() {
+            appData.currentUser = null;
+            localStorage.removeItem('catcityrp_currentUser');
+            showAuthPage();
+        }
+
+        // Рендер постов
+        function renderPosts() {
+            const postsContainer = document.getElementById('posts-container');
+            postsContainer.innerHTML = '';
+            
+            if (appData.posts.length === 0) {
+                postsContainer.innerHTML = '<p>Пока нет постов. Будьте первым, кто создаст пост!</p>';
+                return;
+            }
+            
+            appData.posts.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                
+                const postHeader = document.createElement('div');
+                postHeader.className = 'post-header';
+                
+                const postAvatar = document.createElement('div');
+                postAvatar.className = 'post-avatar';
+                postAvatar.textContent = post.avatar;
+                
+                const postTitle = document.createElement('div');
+                postTitle.className = 'post-title';
+                postTitle.textContent = post.title;
+                
+                postHeader.appendChild(postAvatar);
+                postHeader.appendChild(postTitle);
+                
+                const postContent = document.createElement('div');
+                postContent.className = 'post-content';
+                postContent.textContent = post.content;
+                
+                const postActions = document.createElement('div');
+                postActions.className = 'post-actions';
+                
+                const viewCommentsBtn = document.createElement('button');
+                viewCommentsBtn.textContent = `Комментарии (${post.comments ? post.comments.length : 0})`;
+                viewCommentsBtn.addEventListener('click', () => showPostModal(index));
+                
+                postActions.appendChild(viewCommentsBtn);
+                
+                if (appData.currentUser.isAdmin) {
+                    const deletePostBtn = document.createElement('button');
+                    deletePostBtn.textContent = 'Удалить пост';
+                    deletePostBtn.style.background = '#ff4757';
+                    deletePostBtn.addEventListener('click', () => deletePost(index));
+                    postActions.appendChild(deletePostBtn);
+                }
+                
+                postElement.appendChild(postHeader);
+                postElement.appendChild(postContent);
+                postElement.appendChild(postActions);
+                
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        // Показать модальное окно создания поста
+        function showCreatePostModal() {
+            if (!appData.currentUser.isAdmin) {
+                alert('Функция заблокирована');
+                return;
+            }
+            
+            document.getElementById('create-post-modal').style.display = 'flex';
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.querySelectorAll('#post-avatar-selector .avatar-option').forEach(opt => opt.classList.remove('selected'));
+        }
+
+        // Создать пост
+        function createPost() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const selectedAvatar = document.querySelector('#post-avatar-selector .avatar-option.selected');
+            
+            if (!title || !content || !selectedAvatar) {
+                document.getElementById('post-error').textContent = 'Заполните все поля и выберите аватарку';
+                return;
+            }
+            
+            const newPost = {
+                title,
+                content,
+                avatar: selectedAvatar.textContent,
+                author: appData.currentUser.username,
+                date: new Date().toLocaleString(),
+                comments: []
+            };
+            
+            appData.posts.unshift(newPost);
+            savePosts();
+            
+            document.getElementById('create-post-modal').style.display = 'none';
+            document.getElementById('post-error').textContent = '';
+            renderPosts();
+        }
+
+        // Удалить пост
+        function deletePost(index) {
+            if (!appData.currentUser.isAdmin) {
+                alert('Функция заблокирована');
+                return;
+            }
+            
+            if (confirm('Вы уверены, что хотите удалить этот пост?')) {
+                appData.posts.splice(index, 1);
+                savePosts();
+                renderPosts();
+            }
+        }
+
+        // Показать модальное окно поста с комментариями
+        function showPostModal(postIndex) {
+            const post = appData.posts[postIndex];
+            
+            document.getElementById('modal-post-title').textContent = post.title;
+            document.getElementById('modal-post-title-text').textContent = post.title;
+            document.getElementById('modal-post-avatar').textContent = post.avatar;
+            document.getElementById('modal-post-content').textContent = post.content;
+            
+            const commentsContainer = document.getElementById('post-comments');
+            commentsContainer.innerHTML = '';
+            
+            if (post.comments && post.comments.length > 0) {
+                post.comments.forEach((comment, commentIndex) => {
+                    const commentElement = document.createElement('div');
+                    commentElement.className = 'comment';
+                    
+                    const commentHeader = document.createElement('div');
+                    commentHeader.className = 'comment-header';
+                    
+                    const commentAvatar = document.createElement('div');
+                    commentAvatar.className = 'comment-avatar';
+                    commentAvatar.textContent = comment.avatar;
+                    
+                    // Для всех пользователей добавляем возможность открыть окно действий при клике на аватар
+                    commentAvatar.addEventListener('click', () => showUserActions(comment.author));
+                    
+                    const commentAuthor = document.createElement('div');
+                    commentAuthor.className = 'comment-author';
+                    
+                    // Проверяем, удален ли автор комментария
+                    if (isUserDeleted(comment.author)) {
+                        commentAuthor.innerHTML = `<span class="deleted-account">Удаленный аккаунт</span>`;
+                    } else {
+                        commentAuthor.textContent = comment.author;
+                        if (appData.users.find(u => u.username === comment.author && u.isAdmin)) {
+                            const adminBadge = document.createElement('span');
+                            adminBadge.className = 'admin-badge';
+                            adminBadge.textContent = 'ADMIN';
+                            commentAuthor.appendChild(adminBadge);
+                        }
+                    }
+                    
+                    commentHeader.appendChild(commentAvatar);
+                    commentHeader.appendChild(commentAuthor);
+                    
+                    const commentContent = document.createElement('div');
+                    commentContent.textContent = comment.text;
+                    
+                    commentElement.appendChild(commentHeader);
+                    commentElement.appendChild(commentContent);
+                    
+                    if (appData.currentUser.isAdmin) {
+                        const deleteCommentBtn = document.createElement('button');
+                        deleteCommentBtn.textContent = 'Удалить';
+                        deleteCommentBtn.style.background = '#ff4757';
+                        deleteCommentBtn.style.marginTop = '5px';
+                        deleteCommentBtn.addEventListener('click', () => deleteComment(postIndex, commentIndex));
+                        commentElement.appendChild(deleteCommentBtn);
+                    }
+                    
+                    commentsContainer.appendChild(commentElement);
+                });
+            } else {
+                commentsContainer.innerHTML = '<p>Пока нет комментариев. Будьте первым!</p>';
+            }
+            
+            // Сохраняем индекс поста для добавления комментария
+            document.getElementById('submit-comment-btn').setAttribute('data-post-index', postIndex);
+            
+            document.getElementById('post-modal').style.display = 'flex';
+        }
+
+        // Добавить комментарий
+        function addComment() {
+            const postIndex = document.getElementById('submit-comment-btn').getAttribute('data-post-index');
+            const commentText = document.getElementById('comment-input').value;
+            
+            if (!commentText) {
+                alert('Введите текст комментария');
+                return;
+            }
+            
+            const newComment = {
+                author: appData.currentUser.username,
+                avatar: appData.currentUser.avatar,
+                text: commentText,
+                date: new Date().toLocaleString()
+            };
+            
+            if (!appData.posts[postIndex].comments) {
+                appData.posts[postIndex].comments = [];
+            }
+            
+            appData.posts[postIndex].comments.push(newComment);
+            savePosts();
+            
+            document.getElementById('comment-input').value = '';
+            showPostModal(postIndex);
+        }
+
+        // Удалить комментарий
+        function deleteComment(postIndex, commentIndex) {
+            if (!appData.currentUser.isAdmin) {
+                alert('Функция заблокирована');
+                return;
+            }
+            
+            appData.posts[postIndex].comments.splice(commentIndex, 1);
+            savePosts();
+            showPostModal(postIndex);
+        }
+
+        // Показать действия с пользователем
+        function showUserActions(username) {
+            if (username === appData.currentUser.username) return;
+            
+            document.getElementById('user-actions-modal').setAttribute('data-target-user', username);
+            document.getElementById('user-actions-modal').style.display = 'flex';
+            
+            // Показываем/скрываем кнопки в зависимости от состояния
+            const isBlocked = appData.blockedUsers[appData.currentUser.username] && 
+                             appData.blockedUsers[appData.currentUser.username].includes(username);
+            
+            document.getElementById('block-user-btn').style.display = isBlocked ? 'none' : 'block';
+            document.getElementById('unblock-user-btn').style.display = isBlocked ? 'block' : 'none';
+            
+            // Кнопка "Начать общение" всегда видна
+            document.getElementById('start-chat-btn').style.display = 'block';
+            
+            // Кнопка "Удалить аккаунт" показывается только админам
+            if (appData.currentUser.isAdmin) {
+                document.getElementById('delete-user-btn').style.display = 'block';
+            } else {
+                document.getElementById('delete-user-btn').style.display = 'none';
+            }
+        }
+
+        // Заблокировать пользователя
+        function blockUser() {
+            const targetUser = document.getElementById('user-actions-modal').getAttribute('data-target-user');
+            
+            if (!appData.blockedUsers[appData.currentUser.username]) {
+                appData.blockedUsers[appData.currentUser.username] = [];
+            }
+            
+            if (!appData.blockedUsers[appData.currentUser.username].includes(targetUser)) {
+                appData.blockedUsers[appData.currentUser.username].push(targetUser);
+                saveBlockedUsers();
+            }
+            
+            document.getElementById('user-actions-modal').style.display = 'none';
+            alert(`Пользователь ${targetUser} заблокирован`);
+            
+            // Обновляем список диалогов
+            renderConversations();
+        }
+
+        // Разблокировать пользователя
+        function unblockUser() {
+            const targetUser = document.getElementById('user-actions-modal').getAttribute('data-target-user');
+            
+            if (appData.blockedUsers[appData.currentUser.username] && 
+                appData.blockedUsers[appData.currentUser.username].includes(targetUser)) {
+                const index = appData.blockedUsers[appData.currentUser.username].indexOf(targetUser);
+                appData.blockedUsers[appData.currentUser.username].splice(index, 1);
+                saveBlockedUsers();
+            }
+            
+            document.getElementById('user-actions-modal').style.display = 'none';
+            alert(`Пользователь ${targetUser} разблокирован`);
+            
+            // Обновляем список диалогов
+            renderConversations();
+        }
+
+        // Начать общение
+        function startChat() {
+            const targetUser = document.getElementById('user-actions-modal').getAttribute('data-target-user');
+            
+            // Проверяем, не заблокирован ли пользователь
+            if (isUserBlocked(targetUser)) {
+                alert('Общение с этим пользователем заблокировано');
+                return;
+            }
+            
+            // Проверяем, есть ли уже беседа
+            let existingConversation = appData.conversations.find(conv => 
+                (conv.user1 === appData.currentUser.username && conv.user2 === targetUser) ||
+                (conv.user1 === targetUser && conv.user2 === appData.currentUser.username)
+            );
+            
+            if (!existingConversation) {
+                existingConversation = {
+                    user1: appData.currentUser.username,
+                    user2: targetUser,
+                    messages: []
+                };
+                appData.conversations.push(existingConversation);
+                saveConversations();
+            }
+            
+            document.getElementById('user-actions-modal').style.display = 'none';
+            
+            // Переходим на страницу сообщений
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector('[data-page="messages"]').classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('messages-page').classList.add('active');
+            
+            // Обновляем список диалогов
+            renderConversations();
+            
+            // Открываем чат с пользователем
+            openChat(existingConversation, targetUser);
+        }
+
+        // Показать модальное окно удаления аккаунта администратором
+        function showAdminDeleteModal() {
+            const targetUser = document.getElementById('user-actions-modal').getAttribute('data-target-user');
+            document.getElementById('delete-confirm-text').textContent = 
+                `Вы уверены, что хотите удалить аккаунт пользователя ${targetUser}? Это действие невозможно отменить.`;
+            
+            document.getElementById('confirm-delete-modal').setAttribute('data-target-user', targetUser);
+            document.getElementById('confirm-delete-modal').setAttribute('data-delete-type', 'admin');
+            document.getElementById('user-actions-modal').style.display = 'none';
+            document.getElementById('confirm-delete-modal').style.display = 'flex';
+        }
+
+        // Показать модальное окно удаления своего аккаунта
+        function showDeleteAccountModal() {
+            document.getElementById('delete-confirm-text').textContent = 
+                `Вы уверены, что хотите удалить свой аккаунт? Это действие невозможно отменить. Все ваши данные будут удалены.`;
+            
+            document.getElementById('confirm-delete-modal').setAttribute('data-target-user', appData.currentUser.username);
+            document.getElementById('confirm-delete-modal').setAttribute('data-delete-type', 'self');
+            document.getElementById('confirm-delete-modal').style.display = 'flex';
+        }
+
+        // Подтвердить удаление аккаунта
+        function confirmDeleteAccount() {
+            const targetUser = document.getElementById('confirm-delete-modal').getAttribute('data-target-user');
+            const deleteType = document.getElementById('confirm-delete-modal').getAttribute('data-delete-type');
+            
+            // Добавляем пользователя в список удаленных
+            if (!appData.deletedUsers.includes(targetUser)) {
+                appData.deletedUsers.push(targetUser);
+                saveDeletedUsers();
+            }
+            
+            // Удаляем пользователя из списка активных
+            const userIndex = appData.users.findIndex(u => u.username === targetUser);
+            if (userIndex !== -1) {
+                appData.users.splice(userIndex, 1);
+                saveUsers();
+            }
+            
+            // Удаляем блокировки пользователя
+            if (appData.blockedUsers[targetUser]) {
+                delete appData.blockedUsers[targetUser];
+                saveBlockedUsers();
+            }
+            
+            // Удаляем пользователя из списков блокировок других пользователей
+            Object.keys(appData.blockedUsers).forEach(username => {
+                const index = appData.blockedUsers[username].indexOf(targetUser);
+                if (index !== -1) {
+                    appData.blockedUsers[username].splice(index, 1);
+                }
+            });
+            saveBlockedUsers();
+            
+            // Удаляем диалоги пользователя
+            appData.conversations = appData.conversations.filter(conv => 
+                conv.user1 !== targetUser && conv.user2 !== targetUser
+            );
+            saveConversations();
+            
+            // Обновляем посты и комментарии
+            appData.posts.forEach(post => {
+                if (post.author === targetUser) {
+                    post.author = 'Удаленный аккаунт';
+                }
+                if (post.comments) {
+                    post.comments.forEach(comment => {
+                        if (comment.author === targetUser) {
+                            comment.author = 'Удаленный аккаунт';
+                        }
+                    });
+                }
+            });
+            savePosts();
+            
+            document.getElementById('confirm-delete-modal').style.display = 'none';
+            
+            if (deleteType === 'self') {
+                // Если пользователь удалил свой аккаунт, выходим из системы
+                alert('Ваш аккаунт был удален');
+                logout();
+            } else {
+                // Если админ удалил чужой аккаунт
+                alert(`Аккаунт пользователя ${targetUser} был удален`);
+                renderPosts();
+                renderConversations();
+            }
+        }
+
+        // Отменить удаление аккаунта
+        function cancelDeleteAccount() {
+            document.getElementById('confirm-delete-modal').style.display = 'none';
+        }
+
+        // Рендер списка бесед
+        function renderConversations() {
+            const conversationsList = document.getElementById('conversations-list');
+            const noConversations = document.getElementById('no-conversations');
+            conversationsList.innerHTML = '';
+            
+            const userConversations = appData.conversations.filter(conv => 
+                conv.user1 === appData.currentUser.username || conv.user2 === appData.currentUser.username
+            ).filter(conv => {
+                const otherUser = conv.user1 === appData.currentUser.username ? conv.user2 : conv.user1;
+                return !isUserBlocked(otherUser) && !isUserDeleted(otherUser);
+            });
+            
+            if (userConversations.length === 0) {
+                conversationsList.style.display = 'none';
+                noConversations.style.display = 'block';
+                document.getElementById('no-chat-selected').style.display = 'flex';
+                document.getElementById('active-chat').style.display = 'none';
+                return;
+            }
+            
+            conversationsList.style.display = 'block';
+            noConversations.style.display = 'none';
+            
+            userConversations.forEach(conv => {
+                const otherUser = conv.user1 === appData.currentUser.username ? conv.user2 : conv.user1;
+                const userInfo = appData.users.find(u => u.username === otherUser);
+                
+                const conversationElement = document.createElement('div');
+                conversationElement.className = 'message-user';
+                if (appData.currentChat && appData.currentChat.user2 === otherUser) {
+                    conversationElement.classList.add('active');
+                }
+                conversationElement.setAttribute('data-user', otherUser);
+                
+                const userAvatar = document.createElement('div');
+                userAvatar.className = 'message-avatar';
+                
+                // Если пользователь удален, показываем специальный аватар
+                if (isUserDeleted(otherUser)) {
+                    userAvatar.textContent = '💀';
+                } else if (userInfo) {
+                    userAvatar.textContent = userInfo.avatar;
+                    
+                    // Для всех пользователей добавляем возможность действий при клике на аватар
+                    userAvatar.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showUserActions(otherUser);
+                    });
+                }
+                
+                const userName = document.createElement('div');
+                
+                // Если пользователь удален, показываем специальную надпись
+                if (isUserDeleted(otherUser)) {
+                    userName.innerHTML = '<span class="deleted-account">Удаленный аккаунт</span>';
+                } else {
+                    userName.textContent = otherUser;
+                }
+                
+                // Показываем бейдж, если пользователь заблокирован
+                if (isUserBlocked(otherUser)) {
+                    const blockedBadge = document.createElement('div');
+                    blockedBadge.className = 'blocked-badge';
+                    blockedBadge.textContent = 'Заблокирован';
+                    conversationElement.appendChild(blockedBadge);
+                }
+                
+                conversationElement.appendChild(userAvatar);
+                conversationElement.appendChild(userName);
+                
+                // Не позволяем открывать чат с удаленным пользователем
+                if (!isUserDeleted(otherUser)) {
+                    conversationElement.addEventListener('click', () => openChat(conv, otherUser));
+                }
+                
+                conversationsList.appendChild(conversationElement);
+            });
+        }
+
+        // Открыть чат с пользователем
+        function openChat(conversation, otherUser) {
+            appData.currentChat = conversation;
+            
+            // Обновляем активный диалог в списке
+            document.querySelectorAll('.message-user').forEach(el => {
+                el.classList.remove('active');
+                if (el.getAttribute('data-user') === otherUser) {
+                    el.classList.add('active');
+                }
+            });
+            
+            document.getElementById('no-chat-selected').style.display = 'none';
+            document.getElementById('active-chat').style.display = 'block';
+            
+            const userInfo = appData.users.find(u => u.username === otherUser);
+            
+            // Если пользователь удален, показываем специальную информацию
+            if (isUserDeleted(otherUser)) {
+                document.getElementById('chat-user-info').innerHTML = `
+                    <div class="chat-avatar">💀</div>
+                    <div class="deleted-account">Удаленный аккаунт</div>
+                `;
+                // Скрываем поле ввода для удаленных пользователей
+                document.querySelector('.chat-input').style.display = 'none';
+            } else {
+                document.getElementById('chat-user-info').innerHTML = `
+                    <div class="chat-avatar">${userInfo.avatar}</div>
+                    <div>${otherUser}</div>
+                `;
+                // Показываем поле ввода для активных пользователей
+                document.querySelector('.chat-input').style.display = 'flex';
+                
+                // Добавляем обработчик клика на аватарку в чате
+                const chatAvatar = document.querySelector('.chat-avatar');
+                chatAvatar.addEventListener('click', () => {
+                    showUserActions(otherUser);
+                });
+            }
+            
+            renderChatMessages(conversation);
+            
+            // Сбрасываем высоту textarea
+            const messageInput = document.getElementById('message-input');
+            messageInput.style.height = '60px';
+            messageInput.focus();
+        }
+
+        // Рендер сообщений в чате
+        function renderChatMessages(conversation) {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+            
+            if (conversation.messages.length === 0) {
+                chatMessages.innerHTML = '<p style="text-align: center; padding: 20px; color: #aaa;">Начните общение!</p>';
+                return;
+            }
+            
+            conversation.messages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${message.sender === appData.currentUser.username ? 'own' : 'other'}`;
+                
+                const messageText = document.createElement('div');
+                messageText.textContent = message.text;
+                
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = message.time;
+                
+                messageElement.appendChild(messageText);
+                messageElement.appendChild(messageTime);
+                
+                chatMessages.appendChild(messageElement);
+            });
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Отправить сообщение
+        function sendMessage() {
+            if (!appData.currentChat) return;
+            
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            
+            if (!messageText) return;
+            
+            const otherUser = appData.currentChat.user1 === appData.currentUser.username ? 
+                            appData.currentChat.user2 : appData.currentChat.user1;
+            
+            // Проверяем, не заблокирован ли пользователь (двусторонняя проверка)
+            if (isUserBlocked(otherUser)) {
+                alert('Общение с этим пользователем заблокировано');
+                return;
+            }
+            
+            // Проверяем, не удален ли пользователь
+            if (isUserDeleted(otherUser)) {
+                alert('Нельзя отправлять сообщения удаленному пользователю');
+                return;
+            }
+            
+            const newMessage = {
+                sender: appData.currentUser.username,
+                text: messageText,
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+            
+            appData.currentChat.messages.push(newMessage);
+            saveConversations();
+            
+            messageInput.value = '';
+            messageInput.style.height = '60px';
+            renderChatMessages(appData.currentChat);
+        }
+
+        // Удалить чат
+        function deleteChat() {
+            if (!appData.currentChat) return;
+            
+            if (confirm('Вы уверены, что хотите удалить эту беседу? Сообщения будут безвозвратно удалены.')) {
+                const index = appData.conversations.indexOf(appData.currentChat);
+                appData.conversations.splice(index, 1);
+                saveConversations();
+                
+                appData.currentChat = null;
+                document.getElementById('no-chat-selected').style.display = 'flex';
+                document.getElementById('active-chat').style.display = 'none';
+                renderConversations();
+            }
+        }
+
+        // Рендер профиля
+        function renderProfile() {
+            document.getElementById('profile-username').value = appData.currentUser.username;
+            document.getElementById('profile-description').value = appData.currentUser.description || '';
+            document.getElementById('profile-avatar-display').textContent = appData.currentUser.avatar;
+            
+            // Выделяем текущий аватар
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                if (opt.textContent === appData.currentUser.avatar) {
+                    opt.classList.add('selected');
+                }
+            });
+        }
+
+        // Сохранить профиль
+        function saveProfile() {
+            const description = document.getElementById('profile-description').value;
+            const selectedAvatar = document.querySelector('.avatar-option.selected');
+            
+            if (!selectedAvatar) {
+                document.getElementById('profile-message').textContent = 'Выберите аватарку';
+                document.getElementById('profile-message').className = 'error';
+                return;
+            }
+            
+            // Обновляем данные пользователя
+            const userIndex = appData.users.findIndex(u => u.username === appData.currentUser.username);
+            if (userIndex !== -1) {
+                appData.users[userIndex].description = description;
+                appData.users[userIndex].avatar = selectedAvatar.textContent;
+                saveUsers();
+                
+                // Обновляем текущего пользователя
+                appData.currentUser.description = description;
+                appData.currentUser.avatar = selectedAvatar.textContent;
+                saveCurrentUser();
+                
+                document.getElementById('profile-message').textContent = 'Изменения сохранены';
+                document.getElementById('profile-message').className = 'success';
+                
+                // Обновляем аватарки в комментариях и постах
+                appData.posts.forEach(post => {
+                    if (post.comments) {
+                        post.comments.forEach(comment => {
+                            if (comment.author === appData.currentUser.username) {
+                                comment.avatar = selectedAvatar.textContent;
+                            }
+                        });
+                    }
+                });
+                savePosts();
+            }
+        }
+
+        // Запуск приложения
+        initApp();
+    </script>
+</body>
+</html>
